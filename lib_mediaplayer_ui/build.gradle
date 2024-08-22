@@ -1,4 +1,25 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven-publish'
+
+task sourceJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    archiveClassifier = "sources"
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'com.fengymi.media'
+            artifactId = 'lib.media.player'
+            version = '1.0'
+
+            // 上传 AAR 包
+            afterEvaluate { artifact(tasks.getByName("bundleReleaseAar")) }
+            // 向 Maven 仓库中上传源码
+            artifact sourceJar
+        }
+    }
+}
 
 android {
 
@@ -78,3 +99,8 @@ dependencies {
     compileOnly files('libs/lib_mediaplayer_vlc_r3.5.1_release_20230420.aar')
 }
 
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
